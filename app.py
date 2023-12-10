@@ -28,7 +28,7 @@ def show_image(rover, sol, camera):
         print("favicon not found")
 
     api_key = "put your nasa api key here"
-    # website to get your api key (https://api.nasa.gov/)
+    # website to get your api key [https://api.nasa.gov/]
 
     try:
         Mars_Rover_Photos = requests.get(url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={api_key}")
