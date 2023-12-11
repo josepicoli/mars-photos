@@ -27,8 +27,12 @@ def show_image(rover, sol, camera):
     except:
         print("favicon not found")
 
-    api_key = "put your nasa api key here"
-    # website to get your api key [https://api.nasa.gov/]
+    try:
+        with open("api_key.txt", "r") as key:
+            api_key = key.read()
+            print(api_key)
+    except:
+        print("api key not found")
 
     try:
         Mars_Rover_Photos = requests.get(url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={api_key}")
