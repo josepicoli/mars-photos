@@ -15,7 +15,7 @@ def load_image_from_url(url):
     img = Image.open(BytesIO(img_data))
     return ImageTk.PhotoImage(img)
 
-def show_image(rover, sol, camera):
+def show_image(rover, sol, camera, api_key):
     frame = Toplevel()
     frame.title("Photo")
     frame.geometry("1028x700")
@@ -25,14 +25,7 @@ def show_image(rover, sol, camera):
     try:
         frame.iconbitmap("img\\favicon.ico")
     except:
-        print("favicon not found")
-
-    try:
-        with open("api_key.txt", "r") as key:
-            api_key = key.read()
-            print(api_key)
-    except:
-        print("api key not found")
+        pass
 
     try:
         Mars_Rover_Photos = requests.get(url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={api_key}")
@@ -66,7 +59,7 @@ def show_help():
     try:
         frame.iconbitmap("img\\favicon.ico")
     except:
-        print("favicon not found")
+        pass
 
     lb_help = Label(frame)
     lb_help.config(text= "Rover name and cameras name:")
@@ -125,6 +118,18 @@ def show_help():
     frame.mainloop()
 
 def main_interface():
+    try:
+        with open("api_key.txt", "r") as key:
+            key = key.read().strip()
+            if key == "":
+                raise Exception()
+            else:
+                api_key = key
+                print(repr(api_key))
+    except:
+        api_key = "DEMO_KEY"
+        print(repr(api_key))
+
     frame = Tk()
     frame.title("Mars Photos")
     frame.config(background= blue)
@@ -186,7 +191,7 @@ def main_interface():
     button_search.config(bg= red, fg= white)
     button_search.config(cursor="hand2")
     button_search.config(borderwidth=0)
-    button_search.config(command= lambda: show_image(txt_name_rover.get(), txt_sol.get(), txt_camera.get()))
+    button_search.config(command= lambda: show_image(txt_name_rover.get(), txt_sol.get(), txt_camera.get(), api_key))
 
     button_help = Button(frame)
     button_help.config(text= "Help")
