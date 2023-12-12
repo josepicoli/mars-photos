@@ -28,10 +28,10 @@ def show_image(rover, sol, camera, api_key):
         pass
 
     try:
-        Mars_Rover_Photos = requests.get(url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={api_key}")
+        mars_rover_photos = requests.get(url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={api_key}")
 
-        Mars_Rover_Photos = Mars_Rover_Photos.json()
-        url_mars = Mars_Rover_Photos["photos"][0]["img_src"]
+        mars_rover_photos = mars_rover_photos.json()
+        url_mars = mars_rover_photos["photos"][0]["img_src"]
         print(url_mars)
 
         photo = load_image_from_url(url_mars)
