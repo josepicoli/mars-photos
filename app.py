@@ -118,17 +118,7 @@ def show_help():
     frame.mainloop()
 
 def main_interface():
-    try:
-        with open("api_key.txt", "r") as key:
-            key = key.read().strip()
-            if key == "":
-                raise Exception()
-            else:
-                api_key = key
-                print(repr(api_key))
-    except:
-        api_key = "DEMO_KEY"
-        print(repr(api_key))
+    api_key = set_api_key()
 
     frame = Tk()
     frame.title("Mars Photos")
@@ -204,5 +194,17 @@ def main_interface():
     button_help.config(command= show_help)
 
     frame.mainloop()
+
+def set_api_key():
+    try:
+        with open("api_key.txt", "r") as key:
+            key = key.read().strip()
+            if key != "":
+                print(repr(key))
+                return key
+        raise Exception()
+    except:
+        print(repr("DEMO_KEY"))
+        return "DEMO_KEY"
 
 main_interface()
