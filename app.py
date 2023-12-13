@@ -139,7 +139,7 @@ def main_interface():
     try:
         frame.iconbitmap("img\\favicon.ico")
     except:
-        print("favicon not found")
+        print("favicon not found :3")
 
     lb_name_rover = Label(frame)
     lb_name_rover.config(text= "Rover name: ")
