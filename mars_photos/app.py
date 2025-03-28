@@ -9,7 +9,7 @@ RED = "#FC3D21"
 WHITE = "#FFFFFF"
 
 #turn the URL into an image for tkinter
-def load_image_from_url(url):
+def load_image_from_url(url :str):
     response = requests.get(url)
     img_data = response.content
     img = Image.open(BytesIO(img_data))
@@ -20,75 +20,97 @@ def request(rover :str, sol :str, camera :str, API_KEY :str) -> list:
         r = requests.get(
         url= f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos?sol={sol}&camera={camera}&api_key={API_KEY}"
         )
-        
+
         return [i["img_src"] for i in r.json()["photos"]]
     except:
         return []
 
-def forward(type :str, url_list :list, frame) -> None:
-    photo = load_image_from_url(url_list[0])
-    img_mars = Label(frame, image = photo)
-    img_mars.place(x = -2, y = -2)
-    img_mars.lower()
-
-def window_images(url_list :list):
+def show_image(indx_image :int, url_list :list):
     frame = Toplevel()
-    frame.title("Photo")
-    frame.geometry("1028x700")
-    frame.config(bg= "#000000")
+    frame.title('Photo')
+    frame.geometry('1200x874')
+    frame.config(bg= '#000000')
     frame.resizable(width= True, height= True)
 
-    if url_list == []:
+    if indx_image < 0 or indx_image > len(url_list) - 1:
         lb_error = Label(frame)
-        lb_error.config(text= "images not found")
+        lb_error.config(text= 'image not found')
         lb_error.place(x= 0,y= 0)
         lb_error.config(width= 15, height= 1)
-        lb_error.config(font= "Arial 20 bold")
+        lb_error.config(font= 'Arial 20 bold')
         lb_error.config(fg= RED, bg= BLUE)
         frame.config(bg= BLUE)
 
         frame.mainloop()
 
-    button_right = Button(frame)
-    button_right.config(text= ">")
-    button_right.config(font= "Arial 13 bold")
-    button_right.config(bd = 0)
-    button_right.config(borderwidth= 0)
-    button_right.config(bg = RED, fg = WHITE)
-    button_right.config(cursor = "hand2")
-    button_right.place(x = 990, y = 665)
-    button_right.config(command = lambda: forward("right", url_list, frame))
-
-    button_left = Button(frame)
-    button_left.config(text= "<")
-    button_left.config(font= "Arial 13 bold")
-    button_left.config(bd = 0)
-    button_left.config(borderwidth= 0)
-    button_left.config(bg = RED, fg = WHITE)
-    button_left.config(cursor = "hand2")
-    button_left.place(x = 3, y = 665)
-    button_left.config(command = lambda: forward("left", url_list, frame))
-    """
-    photo = load_image_from_url(url_list[0])
+    photo = load_image_from_url(url_list[indx_image])
     img_mars = Label(frame, image = photo)
-    img_mars.place(x = -2, y = -2)
-    img_mars.lower()
-    """
+    img_mars.place(x = 0, y = 0)
+
     frame.mainloop()
 
-def create_website(url_list):
+def window_images(url_list :list):
+    frame = Toplevel()
+    frame.title('Photos')
+    frame.geometry('400x250')
+    frame.config(bg= BLUE)
+    frame.resizable(width= False, height= False)
+
+    if url_list == []:
+        lb_error = Label(frame)
+        lb_error.config(text= 'images not found')
+        lb_error.place(x= 0,y= 0)
+        lb_error.config(width= 15, height= 1)
+        lb_error.config(font= 'Arial 20 bold')
+        lb_error.config(fg= RED, bg= BLUE)
+        frame.config(bg= BLUE)
+
+        frame.mainloop()
+
+    lb_show = Label(frame)
+    lb_show.config(text= f'0 - {len(url_list) - 1}')
+    lb_show.place(x= 125, y= 55)
+    lb_show.config(font= 'Arial 16 bold')
+    lb_show.config(fg= WHITE, bg= BLUE)
+    lb_show.config(width= 12, height= 1)
+
+    txt_show = Entry(frame)
+    txt_show.config(width= 12)
+    txt_show.config(bg= WHITE)
+    txt_show.config(bd= 0)
+    txt_show.config(font= 'Arial 16 bold')
+    txt_show.place(x= 125,y= 90)
+
+    button_show = Button(frame)
+    button_show.config(text = 'show')
+    button_show.config(font= 'Arial 13 bold')
+    button_show.config(bd = 0)
+    button_show.config(borderwidth= 0)
+    button_show.config(bg = RED, fg = WHITE)
+    button_show.config(cursor = 'hand2')
+    button_show.place(x = 125, y = 130)
+    button_show.config(width= 12, height= 1)
+    button_show.config(command = lambda: show_image(int(txt_show.get()), url_list))
+
+    frame.mainloop()
+
+def create_website(url_list :list):
+    if url_list == []:
+        print('empty list, site not created')
+        return
+    
     START = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mars Photos</title><style>body{background-color:black;}img{display:block;width:800px;margin-left:auto;margin-right:auto;margin-bottom:30px;}</style></head><body>\n'
     END = '</body></html>\n'
-    with open("index.html", "w") as site:
+    with open('index.html', 'w') as site:
         site.write(START)
         for i in url_list:
             site.write(f'<img src="{i}">\n')
         site.write(END)
-    print("site criado")
+    print('site created')
 
 def show_help():
     frame = Toplevel()
-    frame.geometry("350x160")
+    frame.geometry("400x160")
     frame.resizable(width= False, height= False)
     frame.title("Help")
     frame.config(background= BLUE)
@@ -113,7 +135,7 @@ def show_help():
 
     lb_Curiosity = Label(frame)
     lb_Curiosity.config(text= "Curiosity:")
-    lb_Curiosity.place(x= 160, y= 40)
+    lb_Curiosity.place(x= 200, y= 40)
     lb_Curiosity.config(bg= BLUE, fg= WHITE)
     lb_Curiosity.config(font= "Arial 15 bold")
 
@@ -121,7 +143,7 @@ def show_help():
     Curiosity_cameras = ["Curiosity", "FHAZ", "RHAZ", "MAST", "CHEMCAM", "MAHLI", "MARDI", "NAVCAM"]
     cb_Curiosity.set("Curiosity")
     cb_Curiosity.config(values= Curiosity_cameras)
-    cb_Curiosity.place(x= 160, y= 70)
+    cb_Curiosity.place(x= 200, y= 70)
 
     lb_Opportunity= Label(frame)
     lb_Opportunity.config(text= "Opportunity:")
@@ -137,7 +159,7 @@ def show_help():
 
     lb_Spirit= Label(frame)
     lb_Spirit.config(text= "Spirit:")
-    lb_Spirit.place(x= 160, y= 90)
+    lb_Spirit.place(x= 200, y= 90)
     lb_Spirit.config(bg= BLUE, fg= WHITE)
     lb_Spirit.config(font= "Arial 15 bold")
 
@@ -145,21 +167,21 @@ def show_help():
     Spirit_cameras = ["Spirit", "FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
     cb_Spirit.set("Spirit")
     cb_Spirit.config(values= Spirit_cameras)
-    cb_Spirit.place(x= 160, y= 120)
+    cb_Spirit.place(x= 200, y= 120)
 
     frame.mainloop()
 
 def set_api_key():
     try:
-        with open("api_key.txt", "r") as key:
+        with open('api_key.txt', 'r') as key:
             key = key.read().strip()
-            if key != "":
-                print(repr(key))
+            if key != '':
+                print(f'key: {key}')
                 return key
             raise Exception()
     except:
-        print(repr("DEMO_KEY"))
-        return "DEMO_KEY"
+        print('key: DEMO_KEY')
+        return 'DEMO_KEY'
 
 def main_interface():
     API_KEY = set_api_key()
@@ -177,12 +199,12 @@ def main_interface():
     lb_name_rover.config(font= "Arial 15 bold")
     lb_name_rover.config(fg= WHITE, bg= BLUE)
     
-    txt_name_rover = Entry(frame)
-    txt_name_rover.config(width= 20)
-    txt_name_rover.config(bg= WHITE)
-    txt_name_rover.config(bd= 0)
-    txt_name_rover.config(font= "Arial 13")
-    txt_name_rover.place(x= 150,y= 20)
+    txt_show = Entry(frame)
+    txt_show.config(width= 20)
+    txt_show.config(bg= WHITE)
+    txt_show.config(bd= 0)
+    txt_show.config(font= "Arial 13")
+    txt_show.place(x= 150,y= 20)
     
     lb_sol = Label(frame)
     lb_sol.config(text= "Sol: ")
@@ -221,7 +243,7 @@ def main_interface():
     button_search.config(cursor="hand2")
     button_search.config(borderwidth=0)
     button_search.config(command= lambda: 
-        window_images(request(txt_name_rover.get(), txt_sol.get(), txt_camera.get(), API_KEY))
+        window_images(request(txt_show.get(), txt_sol.get(), txt_camera.get(), API_KEY))
     )
     
     button_site = Button(frame)
@@ -233,7 +255,7 @@ def main_interface():
     button_site.config(cursor="hand2")
     button_site.config(borderwidth=0)
     button_site.config(command = lambda: 
-        create_website(request(txt_name_rover.get(), txt_sol.get(), txt_camera.get(), API_KEY))
+        create_website(request(txt_show.get(), txt_sol.get(), txt_camera.get(), API_KEY))
     )
 
     button_help = Button(frame)
