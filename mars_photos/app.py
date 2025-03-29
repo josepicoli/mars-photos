@@ -22,7 +22,8 @@ def request(rover :str, sol :str, camera :str, API_KEY :str) -> list:
         )
 
         return [i["img_src"] for i in r.json()["photos"]]
-    except:
+    except Exception as ex:
+        print(ex)
         return []
 
 def show_image(indx_image :int, url_list :list):
