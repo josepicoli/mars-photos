@@ -22,7 +22,8 @@ def request(rover :str, sol :str, camera :str, API_KEY :str) -> list:
         )
 
         return [i["img_src"] for i in r.json()["photos"]]
-    except:
+    except Exception as ex:
+        print(ex)
         return []
 
 def show_image(indx_image :int, url_list :list):
@@ -175,10 +176,10 @@ def set_api_key():
     try:
         with open('api_key.txt', 'r') as key:
             key = key.read().strip()
-            if key != '':
-                print(f'key: {key}')
-                return key
-            raise Exception()
+            if key == '':
+                raise Exception()
+            print(f'key: {key}')
+            return key
     except:
         print('key: DEMO_KEY')
         return 'DEMO_KEY'
